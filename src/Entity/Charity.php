@@ -2,22 +2,22 @@
 
 namespace App\Entity;
 
-class Charity {
-    private int $id;    // "class attribute" or "class property"
+class Charity
+{
+    private int $id;
     private string $name;
     private string $representativeEmail;
 
     public function __construct(
-        $id,
-        $name,
-        $representativeEmail
+        int $id,
+        string $name,
+        string $representativeEmail
     ) {
         $this->id = $id;
         $this->name = $name;
         $this->representativeEmail = $representativeEmail;
     }
 
-    // Getters 
     public function getId(): int
     {
         return $this->id;
@@ -33,7 +33,6 @@ class Charity {
         return $this->representativeEmail;
     }
 
-    // Setters
     public function setId($id): void
     {
         $this->id = $id;

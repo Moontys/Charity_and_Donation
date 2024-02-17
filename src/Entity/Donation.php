@@ -2,7 +2,8 @@
 
 namespace App\Entity;
 
-class Donation {
+class Donation
+{
     private int $id;
     private string $donorName;
     private float $amount;
@@ -15,7 +16,7 @@ class Donation {
         float $amount,
         int $charityId,
         \DateTimeImmutable $dateTime
-        ) {
+    ) {
         $this->id = $id;
         $this->donorName = $donorName;
         $this->amount = $amount;
@@ -23,7 +24,6 @@ class Donation {
         $this->dateTime = $dateTime;
     }
 
-    // Getters (Incapsuliation)
     public function getId(): int
     {
         return $this->id;
@@ -49,7 +49,6 @@ class Donation {
         return $this->dateTime;
     }
     
-    // Setters (Incapsuliation)
     public function setId(int $id): void
     {
         $this->id = $id;
@@ -74,15 +73,4 @@ class Donation {
     {
         $this->dateTime = $dateTime;
     }
-
 }
-
-// $donation = new Donation("id", "donorName", "amount", "charityId", "dateTime");
-// $donation->setId("111");
-
-
-
-
-
-
-

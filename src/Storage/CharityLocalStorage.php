@@ -4,8 +4,9 @@ namespace App\Storage;
 
 use App\Entity\Charity;
 
-class CharityLocalStorage {
-    private array $data = []; 
+class CharityLocalStorage
+{
+    private array $data = [];
 
     public function add(Charity $charity): void
     {
@@ -21,10 +22,9 @@ class CharityLocalStorage {
             if ($charity->getId() !== $charityToStore->getId()) {
                 $dataToStore[] = $charityToStore;
             }
-
         }
         $this->data = $dataToStore;
-        $this->data[] = $charity; // ???
+        $this->data[] = $charity;
     }
 
     public function delete($id): void
@@ -32,6 +32,7 @@ class CharityLocalStorage {
         $dataToStore = [];
 
         foreach ($this->data as $charityToStore) {
+
             if ($id !== $charityToStore->getId()) {
                 $dataToStore[] = $charityToStore;
             }
@@ -42,5 +43,23 @@ class CharityLocalStorage {
     public function getAll(): array
     {
         return $this->data;
+    }
+
+    public function getNextId(): int
+    {
+        $totalNumberIrArray = count($this->data) + 1;
+
+        return $totalNumberIrArray;
+    }
+
+    public function doesExistsCharityId(int $charityId): bool
+    {
+        foreach ($this->data as $charity) {
+            
+            if ($charity->getId() === $charityId) {
+                return true;
+            }
+        }
+        return false;
     }
 }

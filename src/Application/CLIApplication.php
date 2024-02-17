@@ -4,19 +4,28 @@ namespace App\Application;
 
 use App\Storage\DonationLocalStorage;
 use App\Storage\CharityLocalStorage;
-use App\Entity\Charity;
 use App\Entity\Donation;
+use App\Entity\Charity;
+use App\Validator\DonationValidator;
+use App\Validator\CharityValidator;
 
-class CLIApplication {
+class CLIApplication
+{
     private DonationLocalStorage $donationLocalStorage;
     private CharityLocalStorage $charityLocalStorage;
+    private DonationValidator $donationValidator;
+    private CharityValidator $charityValidator;
 
     public function __construct(
         DonationLocalStorage $donationLocalStorage,
-        CharityLocalStorage $charityLocalStorage
+        CharityLocalStorage $charityLocalStorage,
+        DonationValidator $donationValidator,
+        CharityValidator $charityValidator
     ) {
         $this->donationLocalStorage = $donationLocalStorage;
         $this->charityLocalStorage = $charityLocalStorage;
+        $this->donationValidator = $donationValidator;
+        $this->charityValidator = $charityValidator;
     }
 
     public function viewCharities(): void
@@ -28,27 +37,35 @@ class CLIApplication {
             echo $charity->getId() . "\n";
             echo $charity->getName() . "\n";
             echo $charity->getRepresentativeEmail() . "\n";
+
+            $allAmounts = 0;
+
+            foreach($this->donationLocalStorage->getAllByCharityId($charity->getId()) as $donation) {
+                
+                $allAmounts  += $donation->getAmount();
+            }
+            echo $allAmounts . "\n";
             echo "--- End of Charity View ---\n";
         }
     }
 
-    public function addCharity(): void
+    public function addCharity(string $charityName, string $charityRepresentativeEmail): void
     {
-        $charity = new Charity(1, 'Mantas', 'mantas@gmail.com');
+        $charity = new Charity($this->charityLocalStorage->getNextId(), $charityName, $charityRepresentativeEmail);
 
-        $this->charityLocalStorage->add($charity);
+        if ($this->charityValidator->validate($charity) === true) {
+            $this->charityLocalStorage->add($charity);
+        }
     }
 
-
-    // ???
-    public function editCharity(): void
+    public function editCharity(int $charityId, string $charityName, string $charityRepresentativeEmail): void
     {
-        $charity = new Charity(2, 'Domas', 'domas@gmail.com');
+        $charity = new Charity($charityId, $charityName, $charityRepresentativeEmail);
 
-        $this->charityLocalStorage->update($charity);
+        if ($this->charityValidator->validate($charity, true) === true) {
+            $this->charityLocalStorage->update($charity);
+        }
     }
-
-
 
     public function deleteCharity(int $id): void
     {
@@ -57,7 +74,10 @@ class CLIApplication {
 
     public function addDonation(string $donorName, float $amount, int $charityId)
     {
-        $donation = new Donation(9, $donorName,  $amount, $charityId, new \DateTimeImmutable());
-        $this->donationLocalStorage->add($donation);
+        $donation = new Donation($this->donationLocalStorage->getNextId(), $donorName,  $amount, $charityId, new \DateTimeImmutable());
+
+        if ($this->donationValidator->validate($donation) === true) {
+            $this->donationLocalStorage->add($donation);
+        }
     }
 }
